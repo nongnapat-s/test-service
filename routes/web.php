@@ -35,7 +35,6 @@ Route::post('/upload', function() {
                 [
                     'name'     => 'file',
                     'contents' => fopen(request()->file('file'),'r+'),
-                    'filename' => request()->file('file')->getClientOriginalName() //$filename
                 ]
             ]
     ]);  
