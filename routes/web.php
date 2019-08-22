@@ -37,6 +37,10 @@ Route::post('/upload', function() {
                     'contents' => fopen(request()->file('file'),'r+'),
                 ],
                 [
+                    'name'     => 'file_name',
+                    'contents' => request()->file('file')->getClientOriginalName(),
+                ],
+                [
                     'name'     => 'sub_path',
                     'contents' => 'images',
                 ]
@@ -87,7 +91,7 @@ Route::get('/delete', function() {
             'multipart' => [
                 [
                     'name'     => 'id',
-                    'contents' => 8,
+                    'contents' => 39,
                 ],
             ]
     ]);  
