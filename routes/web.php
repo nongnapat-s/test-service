@@ -46,35 +46,9 @@ Route::post('/upload', function() {
                 ]
             ]
     ]);  
-    return json_decode($response->getBody(), true);
     $data = json_decode($response->getBody(), true);
-    $file = new App\File;
-    $file->file_id = $data['file']['id'];
-    $file->url = $data['url'];
-    $file->save();
+    App\File::create($data + ['file_id' => $data['id']]);
     return json_decode($response->getBody(), true);
-});
-
-Route::get('/download', function() {
-    $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
-        'timeout'  => 8.0,
-    ]);
-    $response = $client->post('download', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
-            ],
-            'multipart' => [
-                [
-                    'name'     => 'id',
-                    'contents' => 4,
-                ],
-            ]
-    ]);  
-    return json_decode($response->getBody(), true);
-
 });
 
 Route::get('/delete', function() {
@@ -90,11 +64,17 @@ Route::get('/delete', function() {
             ],
             'multipart' => [
                 [
-                    'name'     => 'id',
-                    'contents' => 39,
+                    'name'     => 'slug',
+                    'contents' => 'bf23d3c8-d2bd-11e9-bb84-107b44f16ccf',
                 ],
             ]
     ]);  
     return json_decode($response->getBody(), true);
 
+});
+
+Route::get('/store', function() {
+    $file = \App\File::find(2);
+    Illuminate\Support\Facades\Storage::put($file->name, file_get_contents('http://localhost:9000/download/'.$file->slug, 'r'));
+    return 'OK !';
 });
