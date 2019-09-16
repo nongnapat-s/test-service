@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
+    <form action="/put-file" method="post" enctype="multipart/form-data">
     @csrf
     <p>
         <input type="file" name="file">

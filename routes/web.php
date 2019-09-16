@@ -21,13 +21,17 @@ Route::post('/upload', function() {
         'base_uri' => env('STORATE_SERVICE_URL'),
         'timeout'  => 8.0,
     ]);
-    $response = $client->post('upload', [
+    $response = $client->post('storage-service', [
             'headers' => [
                 'Accept' => 'application/json',
                 'token'  => env('STORAGE_SERVICE_TOKEN'), 
                 'secret' => env('STORAGE_SERVICE_SECRET')
             ],
             'multipart' => [
+                [
+                    'name'     => 'function',
+                    'contents' => 'upload'
+                ],
                 [
                     'name'     => 'state',
                     'contents' => 'public'
@@ -36,18 +40,18 @@ Route::post('/upload', function() {
                     'name'     => 'file',
                     'contents' => fopen(request()->file('file'),'r+'),
                 ],
-                [
-                    'name'     => 'file_name',
-                    'contents' => request()->file('file')->getClientOriginalName(),
-                ],
+                // [
+                //     'name'     => 'file_name',
+                //     'contents' => request()->file('file')->getClientOriginalName(),
+                // ],
                 [
                     'name'     => 'sub_path',
                     'contents' => 'images',
                 ]
             ]
     ]);  
-    $data = json_decode($response->getBody(), true);
-    App\File::create($data + ['file_id' => $data['id']]);
+    // $data = json_decode($response->getBody(), true);
+    // App\File::create($data + ['file_id' => $data['id']]);
     return json_decode($response->getBody(), true);
 });
 
@@ -56,7 +60,7 @@ Route::get('/delete', function() {
         'base_uri' => env('STORATE_SERVICE_URL'),
         'timeout'  => 8.0,
     ]);
-    $response = $client->post('delete', [
+    $response = $client->post('storage-service', [
             'headers' => [
                 'Accept' => 'application/json',
                 'token'  => env('STORAGE_SERVICE_TOKEN'), 
@@ -64,8 +68,41 @@ Route::get('/delete', function() {
             ],
             'multipart' => [
                 [
+                    'name'     => 'function',
+                    'contents' => 'delete-file'
+                ],
+                [
                     'name'     => 'slug',
-                    'contents' => 'bf23d3c8-d2bd-11e9-bb84-107b44f16ccf',
+                    'contents' => '86c5d842-d82a-11e9-b6ab-107b44f16ccf',
+                ],
+            ]
+    ]);  
+    return json_decode($response->getBody(), true);
+});
+
+Route::post('/put-file', function() {
+    $client = new GuzzleHttp\Client([
+        'base_uri' => env('STORATE_SERVICE_URL'),
+        'timeout'  => 8.0,
+    ]);
+    $response = $client->post('storage-service', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'token'  => env('STORAGE_SERVICE_TOKEN'), 
+                'secret' => env('STORAGE_SERVICE_SECRET')
+            ],
+            'multipart' => [
+                [
+                    'name'     => 'function',
+                    'contents' => 'put-file'
+                ],
+                [
+                    'name'     => 'slug',
+                    'contents' => '01896b80-d839-11e9-8054-107b44f16ccf',
+                ],
+                [
+                    'name'     => 'file',
+                    'contents' => fopen(request()->file('file'),'r+'),
                 ],
             ]
     ]);  
@@ -77,4 +114,34 @@ Route::get('/store', function() {
     $file = \App\File::find(2);
     Illuminate\Support\Facades\Storage::put($file->name, file_get_contents('http://localhost:9000/download/'.$file->slug, 'r'));
     return 'OK !';
+});
+
+
+Route::get('/delete-folder', function() {
+    $client = new GuzzleHttp\Client([
+        'base_uri' => env('STORATE_SERVICE_URL'),
+        'timeout'  => 8.0,
+    ]);
+    $response = $client->post('storage-service', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'token'  => env('STORAGE_SERVICE_TOKEN'), 
+                'secret' => env('STORAGE_SERVICE_SECRET')
+            ],
+            'multipart' => [
+                [
+                    'name'     => 'function',
+                    'contents' => 'delete-folder'
+                ],
+                [
+                    'name' => 'state',
+                    'contents' => 'local'
+                ],
+                [
+                    'name'     => 'folder',
+                    'contents' => '/test',
+                ],
+            ]
+    ]);  
+    return json_decode($response->getBody(), true);
 });
