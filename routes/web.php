@@ -21,17 +21,13 @@ Route::post('/upload', function() {
         'base_uri' => env('STORATE_SERVICE_URL'),
         'timeout'  => 8.0,
     ]);
-    $response = $client->post('storage-service', [
+    $response = $client->post('upload', [
             'headers' => [
                 'Accept' => 'application/json',
                 'token'  => env('STORAGE_SERVICE_TOKEN'), 
                 'secret' => env('STORAGE_SERVICE_SECRET')
             ],
             'multipart' => [
-                [
-                    'name'     => 'function',
-                    'contents' => 'upload'
-                ],
                 [
                     'name'     => 'state',
                     'contents' => 'public'
@@ -40,10 +36,6 @@ Route::post('/upload', function() {
                     'name'     => 'file',
                     'contents' => fopen(request()->file('file'),'r+'),
                 ],
-                // [
-                //     'name'     => 'file_name',
-                //     'contents' => request()->file('file')->getClientOriginalName(),
-                // ],
                 [
                     'name'     => 'sub_path',
                     'contents' => 'images',
@@ -55,18 +47,22 @@ Route::post('/upload', function() {
     return json_decode($response->getBody(), true);
 });
 
-Route::get('/delete', function() {
+Route::post('/put-file', function() {
     $client = new GuzzleHttp\Client([
         'base_uri' => env('STORATE_SERVICE_URL'),
         'timeout'  => 8.0,
     ]);
-    $response = $client->post('storage-service', [
+    $response = $client->post('update', [
             'headers' => [
                 'Accept' => 'application/json',
                 'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
+                'secret' => env('STORAGE_SERVICE_SECRET'),
             ],
             'multipart' => [
+                [
+                    'name'     => '_method',
+                    'contents' => 'PUT'
+                ],
                 [
                     'name'     => 'function',
                     'contents' => 'delete-file'
@@ -74,31 +70,6 @@ Route::get('/delete', function() {
                 [
                     'name'     => 'slug',
                     'contents' => '86c5d842-d82a-11e9-b6ab-107b44f16ccf',
-                ],
-            ]
-    ]);  
-    return json_decode($response->getBody(), true);
-});
-
-Route::post('/put-file', function() {
-    $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
-        'timeout'  => 8.0,
-    ]);
-    $response = $client->post('storage-service', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
-            ],
-            'multipart' => [
-                [
-                    'name'     => 'function',
-                    'contents' => 'put-file'
-                ],
-                [
-                    'name'     => 'slug',
-                    'contents' => '01896b80-d839-11e9-8054-107b44f16ccf',
                 ],
                 [
                     'name'     => 'file',
@@ -110,12 +81,30 @@ Route::post('/put-file', function() {
 
 });
 
-Route::get('/store', function() {
-    $file = \App\File::find(2);
-    Illuminate\Support\Facades\Storage::put($file->name, file_get_contents('http://localhost:9000/download/'.$file->slug, 'r'));
-    return 'OK !';
+Route::get('/delete-file', function() {
+    $client = new GuzzleHttp\Client([
+        'base_uri' => env('STORATE_SERVICE_URL'),
+        'timeout'  => 8.0,
+    ]);
+    $response = $client->post('/delete-file', [
+            'headers' => [
+                'Accept' => 'application/json',
+                'token'  => env('STORAGE_SERVICE_TOKEN'), 
+                'secret' => env('STORAGE_SERVICE_SECRET')
+            ],
+            'multipart' => [
+                [
+                    'name' => '_method',
+                    'contents' => 'delete'
+                ],
+                [
+                    'name'     => 'slug',
+                    'contents' => '86c5d842-d82a-11e9-b6ab-107b44f16ccf',
+                ],
+            ]
+    ]);  
+    return json_decode($response->getBody(), true);
 });
-
 
 Route::get('/delete-folder', function() {
     $client = new GuzzleHttp\Client([
@@ -144,4 +133,11 @@ Route::get('/delete-folder', function() {
             ]
     ]);  
     return json_decode($response->getBody(), true);
+});
+
+
+Route::get('/store', function() {
+    $file = \App\File::find(2);
+    Illuminate\Support\Facades\Storage::put($file->name, file_get_contents('http://localhost:9000/download/'.$file->slug, 'r'));
+    return 'OK !';
 });
