@@ -228,4 +228,7 @@ return [
 
     ],
 
+    'storage_service_uri' => env('STORATE_SERVICE_URI'),
+    'storage_service_token' => env('STORAGE_SERVICE_TOKEN'),
+    'storage_service_secret' => env('STORAGE_SERVICE_SECRET'),
 ];

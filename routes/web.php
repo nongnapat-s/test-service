@@ -18,14 +18,14 @@ Route::get('/', function () {
 
 Route::post('/upload', function() {
     $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
+        'base_uri' => config('app.storage_service_uri'),
         'timeout'  => 8.0,
     ]);
     $response = $client->post('upload', [
             'headers' => [
                 'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
+                'token'  => config('app.storage_service_token'), 
+                'secret' => config('app.storage_service_secret')
             ],
             'multipart' => [
                 [
@@ -38,7 +38,7 @@ Route::post('/upload', function() {
                 ],
                 [
                     'name'     => 'sub_path',
-                    'contents' => 'images',
+                    'contents' => 'pdf',
                 ]
             ]
     ]);  
@@ -49,23 +49,19 @@ Route::post('/upload', function() {
 
 Route::post('/put-file', function() {
     $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
+        'base_uri' => config('app.storage_service_uri'),
         'timeout'  => 8.0,
     ]);
     $response = $client->post('update', [
             'headers' => [
                 'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET'),
+                'token'  => config('app.storage_service_token'), 
+                'secret' => config('app.storage_service_secret')
             ],
             'multipart' => [
                 [
                     'name'     => '_method',
                     'contents' => 'PUT'
-                ],
-                [
-                    'name'     => 'function',
-                    'contents' => 'delete-file'
                 ],
                 [
                     'name'     => 'slug',
@@ -83,14 +79,14 @@ Route::post('/put-file', function() {
 
 Route::get('/delete-file', function() {
     $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
+        'base_uri' => config('app.storage_service_uri'),
         'timeout'  => 8.0,
     ]);
     $response = $client->post('/delete-file', [
             'headers' => [
                 'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
+                'token'  => config('app.storage_service_token'), 
+                'secret' => config('app.storage_service_secret')
             ],
             'multipart' => [
                 [
@@ -99,7 +95,7 @@ Route::get('/delete-file', function() {
                 ],
                 [
                     'name'     => 'slug',
-                    'contents' => '86c5d842-d82a-11e9-b6ab-107b44f16ccf',
+                    'contents' => '6f142b6e-d9e6-11e9-a0f6-74d02b07df73',
                 ],
             ]
     ]);  
@@ -108,19 +104,19 @@ Route::get('/delete-file', function() {
 
 Route::get('/delete-folder', function() {
     $client = new GuzzleHttp\Client([
-        'base_uri' => env('STORATE_SERVICE_URL'),
+        'base_uri' => config('app.storage_service_uri'),
         'timeout'  => 8.0,
     ]);
-    $response = $client->post('storage-service', [
+    $response = $client->post('delete-folder', [
             'headers' => [
                 'Accept' => 'application/json',
-                'token'  => env('STORAGE_SERVICE_TOKEN'), 
-                'secret' => env('STORAGE_SERVICE_SECRET')
+                'token'  => config('app.storage_service_token'), 
+                'secret' => config('app.storage_service_secret')
             ],
             'multipart' => [
                 [
-                    'name'     => 'function',
-                    'contents' => 'delete-folder'
+                    'name' => '_method',
+                    'contents' => 'delete'
                 ],
                 [
                     'name' => 'state',
@@ -128,7 +124,7 @@ Route::get('/delete-folder', function() {
                 ],
                 [
                     'name'     => 'folder',
-                    'contents' => '/test',
+                    'contents' => '/pdf',
                 ],
             ]
     ]);  
