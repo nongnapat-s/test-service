@@ -20,7 +20,7 @@ class MedicineWeb {
                     ],
             ]);  ;
 
-            \Log::info($response->getBody());
+            \Log::info($response->getStatusCode() . ' ' . $response->getBody());
         }
 
         echo 'Success';
