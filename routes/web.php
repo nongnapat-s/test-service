@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::post('/upload', function() {
     $client = new GuzzleHttp\Client([
+        'verify'  => false,
         'base_uri' => config('app.storage_service_uri'),
         'timeout'  => 8.0,
     ]);
@@ -36,10 +37,6 @@ Route::post('/upload', function() {
                     'name'     => 'file',
                     'contents' => fopen(request()->file('file'),'r+'),
                 ],
-                [
-                    'name'     => 'sub_path',
-                    'contents' => 'pdf',
-                ]
             ]
     ]);  
     // $data = json_decode($response->getBody(), true);
@@ -65,7 +62,7 @@ Route::post('/put-file', function() {
                 ],
                 [
                     'name'     => 'slug',
-                    'contents' => '86c5d842-d82a-11e9-b6ab-107b44f16ccf',
+                    'contents' => 'dfb87f7e-db48-11e9-9379-107b44f16ccf',
                 ],
                 [
                     'name'     => 'file',
@@ -95,7 +92,7 @@ Route::get('/delete-file', function() {
                 ],
                 [
                     'name'     => 'slug',
-                    'contents' => '6f142b6e-d9e6-11e9-a0f6-74d02b07df73',
+                    'contents' => '5b23cf40-db4b-11e9-a1e1-107b44f16ccf',
                 ],
             ]
     ]);  
@@ -120,7 +117,7 @@ Route::get('/delete-folder', function() {
                 ],
                 [
                     'name' => 'state',
-                    'contents' => 'local'
+                    'contents' => 'public'
                 ],
                 [
                     'name'     => 'folder',
